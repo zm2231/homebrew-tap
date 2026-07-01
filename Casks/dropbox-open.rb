@@ -1,0 +1,36 @@
+cask "dropbox-open" do
+  version "1.0"
+  sha256 "ee85214108bdcd72b18a986732ad3d7a2ea3d40e6ab146a096ae042936078f4b"
+
+  url "https://github.com/zm2231/dropbox-open/releases/download/v#{version}/Dropbox%20Deeplink.zip"
+  name "Dropbox Deeplink"
+  desc "Menu-bar app that resolves dbxopen:// links to a local Finder reveal"
+  homepage "https://github.com/zm2231/dropbox-open"
+
+  app "Dropbox Deeplink.app"
+
+  postflight do
+    system_command "/bin/rm",
+                    args: ["-rf", "#{Dir.home}/Library/Services/Copy Dropbox Deeplink.workflow"],
+                    sudo: false
+    system_command "/System/Library/CoreServices/pbs",
+                    args: ["-flush"],
+                    sudo: false
+    system_command "/usr/bin/open",
+                    args: ["-g", "-j", "#{appdir}/Dropbox Deeplink.app"]
+    system_command "/usr/bin/pluginkit",
+                    args: ["-a", "#{appdir}/Dropbox Deeplink.app/Contents/PlugIns/DropboxOpenFinderSync.appex"],
+                    sudo: false
+    system_command "/usr/bin/pluginkit",
+                    args: ["-e", "use", "-i", "com.merchantry.dropbox-open.findersync"],
+                    sudo: false
+    system_command "/usr/bin/killall",
+                    args: ["Finder"],
+                    sudo: false
+  end
+
+  zap trash: [
+    "~/Library/Preferences/com.merchantry.dropbox-open.plist",
+    "~/Library/Services/Copy Dropbox Deeplink.workflow",
+  ]
+end
