@@ -18,7 +18,7 @@ class Agenthail < Formula
     libexec.install "skills"
 
     venv = virtualenv_create(libexec/"venv", formula_opt_bin("python@3.13")/"python3.13")
-    venv.pip_install ["cffi==2.1.0", "curl_cffi==0.15.0"]
+    venv.pip_install ["certifi==2026.6.17", "cffi==2.1.0", "curl_cffi==0.15.0"]
     system formula_opt_bin("node")/"npm", "ci", "--omit=dev", "--prefix", libexec
 
     (bin/"agenthail").write_env_script libexec/"agenthail", {
