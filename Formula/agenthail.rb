@@ -3,9 +3,9 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.1.1/agenthail-v0.1.1-darwin-arm64.tar.gz"
-  version "0.1.1"
-  sha256 "bf921375368bb00f3d4b72f0170bd587b63ac89c9db2d8b5a1845325cf18462a"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.1.2/agenthail-v0.1.2-darwin-arm64.tar.gz"
+  version "0.1.2"
+  sha256 "0f9502e5ce45850baff73657c35f94d61ca58c0415a820c2b3e101fa9518f673"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on arch: :arm64
@@ -38,7 +38,7 @@ class Agenthail < Formula
   test do
     version_info = json.loads(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "6f298054f44d416650d879b9e48058b6990efefb", version_info["revision"]
+    assert_equal "815b0d268204bfd85bc04330a5922afb15f2770f", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
   end
 end
