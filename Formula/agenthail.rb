@@ -21,7 +21,7 @@ class Agenthail < Formula
     venv.pip_install "curl_cffi==0.15.0"
     system formula_opt_bin("node")/"npm", "ci", "--omit=dev", "--prefix", libexec
 
-    bin.write_env_script libexec/"agenthail", {
+    (bin/"agenthail").write_env_script libexec/"agenthail", {
       AGENTHAIL_COOKIE_BRIDGE: libexec/"cookie.mjs",
       AGENTHAIL_PYTHON:        libexec/"venv/bin/python",
       AGENTHAIL_SIDECAR:       libexec/"sidecar.py",
