@@ -1,3 +1,5 @@
+require "json"
+
 class Agenthail < Formula
   include Language::Python::Virtualenv
 
@@ -36,7 +38,7 @@ class Agenthail < Formula
   end
 
   test do
-    version_info = json.loads(shell_output("#{bin}/agenthail version --json"))
+    version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
     assert_equal "815b0d268204bfd85bc04330a5922afb15f2770f", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
