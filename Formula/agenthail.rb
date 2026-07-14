@@ -1,4 +1,3 @@
-require "etc"
 require "json"
 
 class Agenthail < Formula
@@ -26,34 +25,30 @@ class Agenthail < Formula
     venv.pip_install ["certifi==2026.6.17", "cffi==2.1.0", "curl_cffi==0.15.0"]
     system formula_opt_bin("node")/"npm", "ci", "--omit=dev", "--prefix", libexec
 
-    environment = {
-      AGENTHAIL_COOKIE_BRIDGE: libexec/"cookie.mjs",
-      AGENTHAIL_PYTHON:        libexec/"venv/bin/python",
-      AGENTHAIL_SIDECAR:       libexec/"sidecar.py",
-    }
-    if (libexec/"Agenthail.app/Contents/MacOS/Agenthail").executable?
-      environment[:AGENTHAIL_MAC_APP] = libexec/"Agenthail.app/Contents/MacOS/Agenthail"
-    end
-    (bin/"agenthail").write_env_script libexec/"agenthail", environment
+    (bin/"agenthail").write <<~BASH
+      #!/bin/bash
+      export AGENTHAIL_COOKIE_BRIDGE="#{libexec}/cookie.mjs"
+      export AGENTHAIL_MAC_APP="#{libexec}/Agenthail.app/Contents/MacOS/Agenthail"
+      export AGENTHAIL_PYTHON="#{libexec}/venv/bin/python"
+      export AGENTHAIL_SIDECAR="#{libexec}/sidecar.py"
+      skill="#{opt_libexec}/skills/agenthail-operations"
+      if [ -f "$skill/SKILL.md" ]; then
+        for runtime in "$HOME/.claude" "$HOME/.codex" "$HOME/.hermes"; do
+          [ -d "$runtime" ] || continue
+          link="$runtime/skills/agenthail-operations"
+          mkdir -p "$runtime/skills"
+          if [ -L "$link" ]; then
+            ln -sfn "$skill" "$link"
+          elif [ ! -e "$link" ]; then
+            ln -s "$skill" "$link"
+          fi
+        done
+      fi
+      exec "#{libexec}/agenthail" "$@"
+    BASH
   end
 
   def post_install
-    skill = opt_libexec/"skills/agenthail-operations"
-    if (skill/"SKILL.md").exist?
-      home = Pathname(Etc.getpwuid(Process.uid).dir)
-      [home/".claude", home/".codex", home/".hermes"].each do |runtime|
-        next unless runtime.directory?
-
-        link = runtime/"skills/agenthail-operations"
-        if link.exist? && !link.symlink?
-          opoo "#{link} already exists and was left unchanged"
-          next
-        end
-        (runtime/"skills").mkpath
-        ln_sf skill, link
-      end
-    end
-
     app = libexec/"Agenthail.app"
     helper = app/"Contents/MacOS/Agenthail"
     if helper.executable?
@@ -86,10 +81,13 @@ class Agenthail < Formula
   end
 
   test do
+    ENV["HOME"] = testpath
+    (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
     assert_equal "2c7c57a52715399968111889544c803c0b1bb9cc", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
+    assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
   end
 end
