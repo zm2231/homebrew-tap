@@ -1,3 +1,4 @@
+require "etc"
 require "json"
 
 class Agenthail < Formula
@@ -39,7 +40,8 @@ class Agenthail < Formula
   def post_install
     skill = opt_libexec/"skills/agenthail-operations"
     if (skill/"SKILL.md").exist?
-      [Pathname(Dir.home)/".claude", Pathname(Dir.home)/".codex", Pathname(Dir.home)/".hermes"].each do |runtime|
+      home = Pathname(Etc.getpwuid(Process.uid).dir)
+      [home/".claude", home/".codex", home/".hermes"].each do |runtime|
         next unless runtime.directory?
 
         link = runtime/"skills/agenthail-operations"
