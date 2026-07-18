@@ -51,10 +51,17 @@ class Agenthail < Formula
   def post_install
     app = libexec/"Agenthail.app"
     helper = app/"Contents/MacOS/Agenthail"
+    service_target = "gui/#{Process.uid}/homebrew.mxcl.agenthail"
+    if quiet_system "/bin/launchctl", "print", service_target
+      unless quiet_system "/bin/launchctl", "kickstart", "-k", service_target
+        opoo "Agenthail could not restart its existing daemon; run brew services restart agenthail"
+      end
+    end
     if helper.executable?
       unless quiet_system helper, "service", "enable"
         opoo "Agenthail could not register its login item; open the app once to retry"
       end
+      quiet_system "/usr/bin/pkill", "-u", Process.uid.to_s, "-f", "/Cellar/agenthail/.*/Agenthail.app/Contents/MacOS/Agenthail"
       system "/usr/bin/open", "-g", "-j", app
     end
   end
