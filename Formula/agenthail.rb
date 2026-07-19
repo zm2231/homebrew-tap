@@ -5,9 +5,9 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.5/agenthail-v0.2.5-darwin-arm64.tar.gz"
-  version "0.2.5"
-  sha256 "5efeabe2df6f62e5ad9cb882268cced6964a7c2dd9a5f4a51a7d16df2d47ee0c"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.8/agenthail-v0.2.8-darwin-arm64.tar.gz"
+  version "0.2.8"
+  sha256 "8bfa2a048a6a52411cc18e52a348c06bab4269f7f5f1c68012549482ad912a1a"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on arch: :arm64
