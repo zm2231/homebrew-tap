@@ -5,9 +5,9 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.8/agenthail-v0.2.8-darwin-arm64.tar.gz"
-  version "0.2.8"
-  sha256 "8bfa2a048a6a52411cc18e52a348c06bab4269f7f5f1c68012549482ad912a1a"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.9/agenthail-v0.2.9-darwin-arm64.tar.gz"
+  version "0.2.9"
+  sha256 "5ab8eb48fa036dd8512b33d3f553b9494bf23b05df0c8f8d7832268699fbc5cd"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on arch: :arm64
@@ -28,6 +28,7 @@ class Agenthail < Formula
     (bin/"agenthail").write <<~BASH
       #!/bin/bash
       export AGENTHAIL_COOKIE_BRIDGE="#{libexec}/cookie.mjs"
+      export AGENTHAIL_DAEMON_LOG="#{var}/log/agenthail.log"
       export AGENTHAIL_MAC_APP="#{libexec}/Agenthail.app/Contents/MacOS/Agenthail"
       export AGENTHAIL_PYTHON="#{libexec}/venv/bin/python"
       export AGENTHAIL_SIDECAR="#{libexec}/sidecar.py"
@@ -57,6 +58,11 @@ class Agenthail < Formula
       opoo "Agenthail could not restart its existing daemon; run brew services restart agenthail"
     end
     if helper.executable?
+      packaged_helper = Pathname.new("/Applications/Agenthail.app/Contents/MacOS/Agenthail")
+      if packaged_helper.executable? && packaged_helper.realpath != helper.realpath
+        system packaged_helper, "service", "disable"
+        quiet_system "/usr/bin/pkill", "-u", Process.uid.to_s, "-f", "^#{Regexp.escape(packaged_helper.to_s)}$"
+      end
       unless quiet_system helper, "service", "enable"
         opoo "Agenthail could not register its login item; open the app once to retry"
       end
@@ -92,7 +98,7 @@ class Agenthail < Formula
     (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "3ae64db187f9d4bf08d746bc1ef048fe1e1daabe", version_info["revision"]
+    assert_equal "2d2ee35e746d98034ac9e52f6d603ee779cdc435", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
     assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
