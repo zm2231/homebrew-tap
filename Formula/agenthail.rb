@@ -5,9 +5,8 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.13/agenthail-v0.2.13-darwin-arm64.tar.gz"
-  version "0.2.13"
-  sha256 "d7d58dc5a17157887e6354498bbc44a540c8510c8f984899da3c5151cd47ed20"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.18/agenthail-v0.2.18-darwin-arm64.tar.gz"
+  sha256 "f36be043f9517ebd6786c9f3af44f8b412bbea6d41b9d4854717fb9cfd49d660"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on arch: :arm64
@@ -77,7 +76,7 @@ class Agenthail < Formula
       Claude Code needs Remote Control for sessions AgentHail can reach.
       In Claude Code, run /config and enable Remote Control for all sessions.
 
-      Launch writable Codex Desktop sessions through AgentHail:
+      Open or verify Codex Desktop:
         agenthail launch codex
 
       Verify every connected surface:
@@ -98,7 +97,7 @@ class Agenthail < Formula
     (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "a5c80efe6d51d0e1022cd7a4fa0e33b8e9b29817", version_info["revision"]
+    assert_equal "f86c07a1fefa3bfa825b0812cbff2c5a3f8bb52f", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
     assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
