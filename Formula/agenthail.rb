@@ -5,8 +5,8 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.78/agenthail-v0.2.78-darwin-arm64.tar.gz"
-  sha256 "7f8d390b77f79acd79b4bcbcc4b044b89e56bec40b6e60cc2bb131869e0119e8"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.79/agenthail-v0.2.79-darwin-arm64.tar.gz"
+  sha256 "26856623218db5792d0c6cf4da383203bab5051e7f4807fbd2b6a4e3ac693ab0"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on "node" => :build
@@ -98,7 +98,7 @@ class Agenthail < Formula
     (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "a2422a2656672d0cd04fe7536fb172609f432d48", version_info["revision"]
+    assert_equal "0468d613620f78128b78b622cd72566e18d4c0ef", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
     assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
