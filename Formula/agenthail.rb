@@ -5,8 +5,8 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.114/agenthail-v0.2.114-darwin-arm64.tar.gz"
-  sha256 "2bbd341fc9f5424f72936cc4a69bba53405bbeb5424d870a04981d997c587b9e"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.116/agenthail-v0.2.116-darwin-arm64.tar.gz"
+  sha256 "faad82291d7d2a239e48712bf0dc0ffb3427cd7b17288f5fa4aa982ab576c21e"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on "node" => :build
@@ -17,7 +17,7 @@ class Agenthail < Formula
   def install
     libexec.install "agenthail"
     libexec.install "Agenthail.app" if File.directory?("Agenthail.app")
-    libexec.install "claude-host", "runtime"
+    libexec.install "claude-host", "browser-host", "runtime"
     libexec.install "sidecar/cookie.mjs", "sidecar/package-lock.json", "sidecar/package.json", "sidecar/sidecar.py"
     libexec.install "skills"
 
@@ -98,11 +98,12 @@ class Agenthail < Formula
     (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "47596dd83e3a85ce5f54b4312ecaf730daa69807", version_info["revision"]
+    assert_equal "534d8552e3b055b85cc79b5f7d44700f86aee49f", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
     assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
     assert_match "v22.", shell_output("#{libexec}/runtime/node/bin/node --version")
     assert_path_exists libexec/"claude-host/node_modules/@anthropic-ai/claude-agent-sdk/package.json"
+    assert_path_exists libexec/"browser-host/node_modules/playwright-core/package.json"
   end
 end
