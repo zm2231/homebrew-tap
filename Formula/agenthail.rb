@@ -5,8 +5,8 @@ class Agenthail < Formula
 
   desc "Connect Claude Code, Codex, and Notion agent sessions"
   homepage "https://github.com/zm2231/agenthail"
-  url "https://github.com/zm2231/agenthail/releases/download/v0.2.130/agenthail-v0.2.130-darwin-arm64.tar.gz"
-  sha256 "91024740d4f22505cd99d4738e95e7f2da97d5c1964e225a2d360191fa1f72e2"
+  url "https://github.com/zm2231/agenthail/releases/download/v0.2.148/agenthail-v0.2.148-darwin-arm64.tar.gz"
+  sha256 "41403f80c106dc9dac6b0bb12f893e95fc1034592a1d202018126f215e0de001"
   license "PolyForm-Noncommercial-1.0.0"
 
   depends_on "node" => :build
@@ -17,7 +17,7 @@ class Agenthail < Formula
   def install
     libexec.install "agenthail"
     libexec.install "Agenthail.app" if File.directory?("Agenthail.app")
-    libexec.install "claude-host", "browser-host", "runtime"
+    libexec.install "claude-host", "browser-host", "extension-host", "runtime"
     libexec.install "sidecar/cookie.mjs", "sidecar/package-lock.json", "sidecar/package.json", "sidecar/sidecar.py"
     libexec.install "skills"
 
@@ -82,6 +82,9 @@ class Agenthail < Formula
 
       Verify every connected surface:
         agenthail doctor
+
+      Before brew uninstall agenthail, remove its MCP server from Claude:
+        agenthail mcp uninstall
     EOS
   end
 
@@ -98,12 +101,13 @@ class Agenthail < Formula
     (testpath/".hermes").mkpath
     version_info = JSON.parse(shell_output("#{bin}/agenthail version --json"))
     assert_equal version.to_s, version_info["version"].delete_prefix("v")
-    assert_equal "c152e9edf2b9c111ae598d31ce6549be7beffdb6", version_info["revision"]
+    assert_equal "b731b02a5ff3466ef80d36121c38c340ac2ba780", version_info["revision"]
     assert_match "agenthail - hail an agent", shell_output("#{bin}/agenthail --help")
     assert_path_exists libexec/"skills/agenthail-operations/SKILL.md"
     assert_predicate testpath/".hermes/skills/agenthail-operations", :symlink?
     assert_match "v22.", shell_output("#{libexec}/runtime/node/bin/node --version")
     assert_path_exists libexec/"claude-host/node_modules/@anthropic-ai/claude-agent-sdk/package.json"
     assert_path_exists libexec/"browser-host/node_modules/playwright-core/package.json"
+    assert_path_exists libexec/"extension-host/host.mjs"
   end
 end
